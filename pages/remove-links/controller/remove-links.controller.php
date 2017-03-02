@@ -1,7 +1,9 @@
 <?php
 
+$siteUrl = get_site_url();
+
 $getLinksInContent = function($str) {
-    $pattern = '#<a(.*?)href=((\'|"))(http://(.*?))(\'|")(.*?)>(.*?)</a>#';
+    $pattern = '#<a(.*?)href=((\'|"))(http(s)?:(.*?))(\'|")(.*?)>(.*?)</a>#';
     $flags = 0;
 
     preg_match_all ($pattern, $str, $matches, $flags);
@@ -17,8 +19,13 @@ $getLinksInContent = function($str) {
 };
 
 $getLinksInContentExternal = function($row) {
-    return strpos($row['url'], 'http://') === 0
-        && strpos($row['url'], 'http://raciborz.pttk.pl/') !== 0;
+    $url = strtolower($row['url']);
+    
+    if(strpos($url, $siteUrl) === 0) {
+        return false;
+    }
+    
+    return strpos($url, 'http:') === 0 || strpos($url, 'https:') === 0;
 };
 
 $queryListPosts = function($filter = array()) {
